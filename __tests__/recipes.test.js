@@ -5,6 +5,7 @@ const app = require('../lib/app');
 const connect = require('../lib/utils/connect');
 const mongoose = require('mongoose');
 const Recipe = require('../lib/models/Recipe');
+const Attempt = require('../lib/models/Attempt');
 
 describe('app routes', () => {
     beforeAll(() => {
@@ -79,6 +80,14 @@ describe('app routes', () => {
                 { amount: 3, measurement: 'teaspoons', name: 'sugar' }
             ]
         });
+        const attempt = await Attempt.create([
+            {
+                recipeId: recipe._id,
+                dateOfEvent: Date.now(),
+                notes: 'doing it',
+                rating: 7
+            }
+        ]);
 
         return request(app)
             .get(`/api/v1/recipes/${recipe._id}`)
@@ -90,6 +99,7 @@ describe('app routes', () => {
                     ingredients: [
                         { _id: expect.any(String), amount: 3, measurement: 'teaspoons', name: 'sugar' }
                     ],
+                    attempts: JSON.parse(JSON.stringify(attempt)),
                     __v: 0
                 });
             });

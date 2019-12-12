@@ -4,6 +4,7 @@ const app = require('../lib/app');
 const mongoose = require('mongoose');
 const connect = require('../lib/utils/connect');
 const Attempt = require('../lib/models/Attempt');
+const Recipe = require('../lib/models/Recipe');
 
 describe('event routes', () => {
     beforeAll(() => {
@@ -14,6 +15,24 @@ describe('event routes', () => {
         return mongoose.connection.dropDatabase();
     });
 
+    let recipe;
+    beforeEach(async() => {
+        recipe = await Recipe.create({
+            name: 'cookies',
+            directions: [
+                'preheat oven to 375',
+                'mix ingredients',
+                'put dough on cookie sheet',
+                'bake for 10 minutes'
+            ],
+            ingredients: [{
+                amount: 3,
+                measurement: 'teaspoons',
+                name: 'sugar'
+            }]
+        });
+    });
+
     afterAll(() => {
         return mongoose.connection.close();
     });
@@ -22,7 +41,7 @@ describe('event routes', () => {
         return request(app)
             .post('/api/v1/attempts')
             .send({
-                recipeId: 24,
+                recipeId: recipe._id,
                 dateOfEvent: Date.now(),
                 notes: 'did things',
                 rating: 4
@@ -30,7 +49,7 @@ describe('event routes', () => {
             .then(res => {
                 expect(res.body).toEqual({
                     _id: expect.any(String),
-                    recipeId: 24,
+                    recipeId: recipe._id.toString(),
                     dateOfEvent: expect.any(String),
                     notes: 'did things',
                     rating: 4,
@@ -41,9 +60,9 @@ describe('event routes', () => {
 
     it('gets all attempts', async() => {
         const attempts = await Attempt.create([
-            { recipeId: 1, dateOfEvent: Date.now(), rating: 4 },
-            { recipeId: 3, dateOfEvent: Date.now(), rating: 9 },
-            { recipeId: 32, dateOfEvent: Date.now(), rating: 8 }
+            { recipeId: recipe._id, dateOfEvent: Date.now(), rating: 4 },
+            { recipeId: recipe._id, dateOfEvent: Date.now(), rating: 9 },
+            { recipeId: recipe._id, dateOfEvent: Date.now(), rating: 8 }
         ]);
         return request(app)
             .get('/api/v1/attempts')
@@ -56,7 +75,7 @@ describe('event routes', () => {
 
     it('gets a single attempt by id', async() => {
         const attempt = await Attempt.create({
-            recipeId: 32,
+            recipeId: recipe._id,
             dateOfEvent: Date.now(),
             notes: 'crumbs',
             rating: 1
@@ -66,7 +85,7 @@ describe('event routes', () => {
             .then(res => {
                 expect(res.body).toEqual({
                     _id: expect.any(String),
-                    recipeId: 32,
+                    recipeId: recipe._id.toString(),
                     dateOfEvent: expect.any(String),
                     notes: 'crumbs',
                     rating: 1,
@@ -77,7 +96,7 @@ describe('event routes', () => {
 
     it('updates an attempt by id', async() => {
         const attempt = await Attempt.create({
-            recipeId: 32,
+            recipeId: recipe._id,
             dateOfEvent: Date.now(),
             notes: 'crumbs',
             rating: 1
@@ -88,7 +107,7 @@ describe('event routes', () => {
             .then(res => {
                 expect(res.body).toEqual({
                     _id: attempt._id.toString(),
-                    recipeId: 32,
+                    recipeId: recipe._id.toString(),
                     dateOfEvent: expect.any(String),
                     notes: 'bread',
                     rating: 1,
@@ -99,7 +118,7 @@ describe('event routes', () => {
 
     it('deletes attempt by id', async() => {
         const attempt = await Attempt.create({
-            recipeId: 32,
+            recipeId: recipe._id,
             dateOfEvent: Date.now(),
             notes: 'crumbs',
             rating: 1
@@ -109,7 +128,7 @@ describe('event routes', () => {
             .then(res => {
                 expect(res.body).toEqual({
                     _id: attempt._id.toString(),
-                    recipeId: 32,
+                    recipeId: recipe._id.toString(),
                     dateOfEvent: expect.any(String),
                     notes: 'crumbs',
                     rating: 1,
