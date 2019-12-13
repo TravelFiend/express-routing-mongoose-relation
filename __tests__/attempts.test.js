@@ -136,46 +136,4 @@ describe('event routes', () => {
                 });
             });
     });
-
-    it('should return the day', async() => {
-        const recipe = await Recipe.create({
-            name: 'cookies',
-            directions: ['buy and eat'],
-            ingredients: [{
-                amount: 3,
-                measurement: 'teaspoons',
-                name: 'sugar'
-            }]
-        });
-
-        expect(recipe.day).toEqual();
-    });
-
-    it('should return the month', async() => {
-        const recipe = await Recipe.create({
-            name: 'cookies',
-            directions: ['buy and eat'],
-            ingredients: [{
-                amount: 3,
-                measurement: 'teaspoons',
-                name: 'sugar'
-            }]
-        });
-
-        expect(recipe.month).toEqual(11);
-    });
-
-    it('should return the year', async() => {
-        const recipe = await Recipe.create({
-            name: 'cookies',
-            directions: ['buy and eat'],
-            ingredients: [{
-                amount: 3,
-                measurement: 'teaspoons',
-                name: 'sugar'
-            }]
-        });
-
-        expect(recipe.year).toEqual(2019);
-    });
 });
