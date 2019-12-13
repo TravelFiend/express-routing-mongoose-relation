@@ -149,7 +149,7 @@ describe('app routes', () => {
             ]
         });
 
-        const attempt = await Attempt.create([
+        const attempts = await Attempt.create([
             {
                 recipeId: recipe._id,
                 dateOfEvent: Date.now(),
@@ -182,6 +182,10 @@ describe('app routes', () => {
                     ],
                     __v: recipe.__v
                 });
+                return Attempt.find();
+            })
+            .then(attempts => {
+                expect(attempts).toHaveLength(0);
             });
     });
 });
