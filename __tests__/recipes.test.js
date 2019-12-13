@@ -149,6 +149,27 @@ describe('app routes', () => {
             ]
         });
 
+        const attempt = await Attempt.create([
+            {
+                recipeId: recipe._id,
+                dateOfEvent: Date.now(),
+                notes: 'doing it',
+                rating: 3
+            },
+            {
+                recipeId: recipe._id,
+                dateOfEvent: Date.now(),
+                notes: 'doing it',
+                rating: 7
+            },
+            {
+                recipeId: recipe._id,
+                dateOfEvent: Date.now(),
+                notes: 'doing it',
+                rating: 5
+            }
+        ]);
+
         return request(app)
             .delete(`/api/v1/recipes/${recipe._id}`)
             .then(res => {
